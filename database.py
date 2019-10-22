@@ -3,9 +3,7 @@ import os
 import classes as c
 import pandas as pd
 
-dir_path = os.path.dirname(__file__)
-
-db_url = dir_path + '/'
+db_url = os.path.dirname(__file__) + '/'
 
 def get_db_path():
     return dir_path
