@@ -1,10 +1,10 @@
 import sqlite3
 import os
 import classes as c
+import pandas as pd
 
-# Get root project path i.g: C:/Users/Documents/Project
 dir_path = os.path.dirname(__file__)
-# Create database in C:/Users/Documents/Project/wow.db
+
 db_url = dir_path + '/'
 
 def get_db_path():
@@ -65,7 +65,7 @@ def create_database():
         """)
 
     except sqlite3.Error as e:
-        print('class error:',e)
+        print('races error:',e)
 
     try:
 
@@ -113,39 +113,40 @@ def create_database():
         
     conn.close()
 
+def create_race(race):
+    conn = get_connection()
+
+    conn.execute(f"INSERT INTO race(name, con, str, int, spd) VALUES( '{race.name}', '{race.con}', '{race.str}', '{race.int}', '{race.spd}');")
+    conn.commit()
+    conn.close()    
+
 def create_class(clas):
     conn = get_connection()
 
     conn.execute(f"INSERT INTO class(name, con, str, int, spd) VALUES( '{clas.name}', '{clas.con}', '{clas.str}', '{clas.int}', '{clas.spd}');")
     conn.commit()
-    conn.close()    
-
-def create_race(race):
-    conn = get_connection()
-
-    conn.execute("""INSERT INTO race VALUES (""",
-    race.id, ',',
-    race.name, ',',
-    race.con, ',',
-    race.str, ',',
-    race.int, ',',
-    race.spd, ');')
-
     conn.close() 
 
 def create_player(player):
-    conn = get_connection()
-
-    conn.execute("""INSERT INTO player VALUES (""",
-    player.id, ',',
-    player.name, ',',
-    player.id_class, ',',
-    player.id_race, ',',
-    player.life, ',',
-    player.mana, ',',
-    player.con, ',',
-    player.str, ',',
-    player.int, ',',
-    player.spd, ');')
-
+    conn = get_connection() 
+    
+    player.life += get_stats('race', 'con', player.id_race)*0.5 + get_stats('class', 'con', player.id_class)*0.5
+    player.mana += get_stats('race', 'int', player.id_race)*0.5 + get_stats('class', 'int', player.id_class)*0.5
+    player.con +=  get_stats('race', 'con', player.id_race) + get_stats('class', 'con', player.id_class)
+    player.str += get_stats('race', 'str', player.id_race) + get_stats('class', 'str', player.id_class)
+    player.int += get_stats('race', 'int', player.id_race) + get_stats('class', 'int', player.id_class)
+    player.spd += get_stats('race', 'spd', player.id_race) + get_stats('class', 'spd', player.id_class)
+    
+    conn.execute(f"INSERT INTO player(name, level, exp, id_class, id_race, life, mana, con, str, int, spd) VALUES( '{player.name}', '{player.level}', '{player.exp}', '{player.id_class}', '{player.id_race}', '{player.life}', '{player.mana}', '{player.con}', '{player.str}', '{player.int}', '{player.spd}');")
+    conn.commit()
     conn.close()    
+
+def get_stats(tableName, stat, idName):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(f"SELECT {stat} FROM {tableName} WHERE id = {idName};")
+    
+    rows = cur.fetchall()
+    value = rows[0][0]
+
+    return value
