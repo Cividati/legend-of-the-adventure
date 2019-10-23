@@ -28,9 +28,17 @@ def main():
     player = [
         c.player(1, 'Rubens', 1, 0, 1, 1, 10, 10, 10, 10, 10, 10),
         c.player(2, 'Tavão', 1, 0, 1, 4),
-        c.player(3, 'Sader', 1, 0, 4, 2)]
+        c.player(3, 'Sader', 1, 0, 4, 2),
+        c.player(4, 'Kpis', 1, 0, 1, 1)]
 
     for pl in player:
         db.create_player(pl)
+
+    iten =[
+        c.iten(1, 'Machado de Assis', 'Um machado feito pelos deuses da literatura brasileira', 10,10,10,10)
+    ]
+
+    for it in iten:
+        db.create_iten(it)
 
 main()
