@@ -158,3 +158,46 @@ def get_stats(tableName, stat, idName):
     value = rows[0][0]
 
     return value
+
+def get_player(value = '', param = 'name'):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(f'SELECT * FROM player WHERE {param} = "{value}";')
+    
+    rows = cur.fetchall()
+
+    if rows:
+        player = c.player(
+            rows[0][0],
+            rows[0][1],
+            rows[0][2],
+            rows[0][3],
+            rows[0][4],
+            rows[0][5],
+            rows[0][6],
+            rows[0][7],
+            rows[0][8],
+            rows[0][9],
+            rows[0][10],
+            rows[0][11]
+        )
+        return player
+    return False
+
+def set_player(player):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(f'UPDATE player SET'
+    f' name = "{player.name}",'
+    f' level = "{player.level}",'
+    f' exp = "{player.exp}",'
+    f' id_class = "{player.id_class}",'
+    f' id_race = "{player.id_race}",'
+    f' life = "{player.life}",'
+    f' mana = "{player.mana}",'
+    f' con = "{player.con}",'
+    f' str = "{player.str}",'
+    f' int = "{player.int}",'
+    f' spd = "{player.name}"'
+    f' WHERE id = "{player.id}";')
+    conn.commit()
