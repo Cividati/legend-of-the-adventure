@@ -16,12 +16,12 @@ def get_connection(db_name = 'database.db'):
 def create_database():
     conn = get_connection()
     cursor = conn.cursor()
-# creating the databse 
+    # creating the databse 
 
     try:
         # Create table iten
         cursor.execute("""
-        CREATE TABLE iten(
+       CREATE TABLE IF NOT EXISTS iten(
             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
             name INTEGER NOT NULL,
             description CHAR NOT NULL,
@@ -31,14 +31,13 @@ def create_database():
             spd FLOAT NOT NULL
         );
         """)
-
     except sqlite3.Error as e:
         print('iten error:',e)
 
     try:
         # Create table race
         cursor.execute("""
-        CREATE TABLE race(
+        CREATE TABLE IF NOT EXISTS race(
             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
             name INTEGER NOT NULL,
             con FLOAT NOT NULL,
@@ -47,14 +46,13 @@ def create_database():
             spd FLOAT NOT NULL
         );
         """)
-
     except sqlite3.Error as e:
         print('race error:',e)
 
     try:
         # Create table class
         cursor.execute("""
-        CREATE TABLE class(
+        CREATE TABLE IF NOT EXISTS class(
             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
             name INTEGER NOT NULL,
             con FLOAT NOT NULL,
@@ -63,15 +61,13 @@ def create_database():
             spd FLOAT NOT NULL
         ); 
         """)
-
     except sqlite3.Error as e:
         print('races error:',e)
 
     try:
-
         # Create table player
         cursor.execute("""
-        CREATE TABLE player(
+        CREATE TABLE IF NOT EXISTS player(
             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
             name CHAR(45) NOT NULL,
             level int NOT NULL,
@@ -92,11 +88,10 @@ def create_database():
     except sqlite3.Error as e:
         print('player error:',e)
 
-
     try:
         # Create table storage
         cursor.execute("""
-        CREATE TABLE storage(
+        CREATE TABLE IF NOT EXISTS inventory(
             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
             id_iten INTEGER NOT NULL,
             id_player INTEGER NOT NULL,
@@ -105,35 +100,34 @@ def create_database():
             FOREIGN KEY (id_player) REFERENCES player(id)
         );
         """)
-
-    
     except sqlite3.Error as e:
         print('storage error:',e)
-        
         
     conn.close()
 
 def create_race(race):
     conn = get_connection()
 
-    conn.execute(f"INSERT INTO race(name, con, str, int, spd) VALUES( '{race.name}', '{race.con}', '{race.str}', '{race.int}', '{race.spd}');")
+    conn.execute(f"INSERT INTO race(name, con, str, int, spd) VALUES( "
+        f"'{race.name}', '{race.con}', '{race.str}', '{race.int}', '{race.spd}');")
     conn.commit()
     conn.close()    
 
 def create_class(clas):
     conn = get_connection()
 
-    conn.execute(f"INSERT INTO class(name, con, str, int, spd) VALUES( '{clas.name}', '{clas.con}', '{clas.str}', '{clas.int}', '{clas.spd}');")
+    conn.execute(f"INSERT INTO class(name, con, str, int, spd) VALUES( "
+        f"'{clas.name}', '{clas.con}', '{clas.str}', '{clas.int}', '{clas.spd}');")
     conn.commit()
     conn.close() 
 
 def create_iten(iten):
     conn = get_connection()
 
-    conn.execute(f"INSERT INTO iten(name, description, con, str, int, spd) VALUES( '{iten.name}', '{iten.description}', '{iten.con}', '{iten.str}', '{iten.int}', '{iten.spd}');")
+    conn.execute(f"INSERT INTO iten(name, description, con, str, int, spd) VALUES( "
+        f"'{iten.name}', '{iten.description}', '{iten.con}', '{iten.str}', '{iten.int}', '{iten.spd}');")
     conn.commit()
     conn.close() 
-
 
 def create_player(player):
     conn = get_connection() 
@@ -145,7 +139,9 @@ def create_player(player):
     player.int += get_stats('race', 'int', player.id_race) + get_stats('class', 'int', player.id_class)
     player.spd += get_stats('race', 'spd', player.id_race) + get_stats('class', 'spd', player.id_class)
     
-    conn.execute(f"INSERT INTO player(name, level, exp, id_class, id_race, life, mana, con, str, int, spd) VALUES( '{player.name}', '{player.level}', '{player.exp}', '{player.id_class}', '{player.id_race}', '{player.life}', '{player.mana}', '{player.con}', '{player.str}', '{player.int}', '{player.spd}');")
+    conn.execute(f"INSERT INTO player(name, level, exp, id_class, id_race, life, mana, con, str, int, spd) VALUES(" 
+        f"'{player.name}', '{player.level}', '{player.exp}', '{player.id_class}', '{player.id_race}',"
+        f"'{player.life}', '{player.mana}', '{player.con}', '{player.str}', '{player.int}', '{player.spd}');")
     conn.commit()
     conn.close()    
 
@@ -159,7 +155,27 @@ def get_stats(tableName, stat, idName):
 
     return value
 
-def get_player(value = '', param = 'name'):
+def get_iten(value = '', param = 'id'):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(f'SELECT * FROM iten WHERE {param} = "{value}";')
+    
+    rows = cur.fetchall()
+
+    if rows:
+        iten = c.iten(
+            rows[0][1],
+            rows[0][2],
+            rows[0][3],
+            rows[0][4],
+            rows[0][5],
+            rows[0][6],
+            rows[0][0]
+        )
+        return iten
+    return False
+
+def get_player(value = '', param = 'id'):
     conn = get_connection()
     cur = conn.cursor()
     cur.execute(f'SELECT * FROM player WHERE {param} = "{value}";')
@@ -168,7 +184,6 @@ def get_player(value = '', param = 'name'):
 
     if rows:
         player = c.player(
-            rows[0][0],
             rows[0][1],
             rows[0][2],
             rows[0][3],
@@ -179,12 +194,13 @@ def get_player(value = '', param = 'name'):
             rows[0][8],
             rows[0][9],
             rows[0][10],
-            rows[0][11]
+            rows[0][11],
+            rows[0][0]
         )
         return player
     return False
 
-def set_player(player):
+def update_player(player):
     conn = get_connection()
     cur = conn.cursor()
     cur.execute(f'UPDATE player SET'
@@ -201,3 +217,30 @@ def set_player(player):
     f' spd = "{player.name}"'
     f' WHERE id = "{player.id}";')
     conn.commit()
+
+def rm_player(player):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(f"DELETE FROM player WHERE id = {player.id};")
+    conn.commit()
+    
+def update_stats(tableName, stat, value, idName):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(f"UPDATE {tableName} SET {stat} = {value} WHERE id = {idName};")
+    conn.commit()
+
+def att_iten(player, iten):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(f"INSERT INTO inventory(id_player, id_iten) VALUES("
+    f"{player.id},{iten.id});")
+    conn.commit()
+
+def rm_iten(player,iten):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(f"DELETE FROM inventory WHERE "
+    f"id_player = {player.id} AND id_iten = {iten.id};")
+    conn.commit()
+    
