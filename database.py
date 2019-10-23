@@ -3,7 +3,9 @@ import os
 import classes as c
 import pandas as pd
 
-db_url = os.path.dirname(__file__) + '/'
+dir_path = os.path.dirname(__file__)
+
+db_url = dir_path + '/'
 
 def get_db_path():
     return dir_path
@@ -124,6 +126,14 @@ def create_class(clas):
     conn.execute(f"INSERT INTO class(name, con, str, int, spd) VALUES( '{clas.name}', '{clas.con}', '{clas.str}', '{clas.int}', '{clas.spd}');")
     conn.commit()
     conn.close() 
+
+def create_iten(iten):
+    conn = get_connection()
+
+    conn.execute(f"INSERT INTO iten(name, description, con, str, int, spd) VALUES( '{iten.name}', '{iten.description}', '{iten.con}', '{iten.str}', '{iten.int}', '{iten.spd}');")
+    conn.commit()
+    conn.close() 
+
 
 def create_player(player):
     conn = get_connection() 
