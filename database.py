@@ -80,7 +80,9 @@ def create_database():
             str FLOAT NOT NULL,
             int FLOAT NOT NULL,
             spd FLOAT NOT NULL,
+            iten_equipped INT
 
+            FOREIGN KEY (iten_equipped) REFERENCES iten(id),
             FOREIGN KEY (id_race) REFERENCES race(id),
             FOREIGN KEY (id_class) REFERENCES class(id)
         );
@@ -200,6 +202,86 @@ def get_player(value = '', param = 'id'):
         return player
     return False
 
+def get_class(value = '', param = 'id'):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(f'SELECT * FROM class WHERE {param} = "{value}";')
+    
+    rows = cur.fetchall()
+
+    if rows:
+        clas = c.clas(
+            rows[0][1],
+            rows[0][2],
+            rows[0][3],
+            rows[0][4],
+            rows[0][5],
+            rows[0][0]
+        )
+        return clas
+    return False
+
+def get_race(value = '', param = 'id'):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(f'SELECT * FROM race WHERE {param} = "{value}";')
+    
+    rows = cur.fetchall()
+
+    if rows:
+        race = c.race(
+            rows[0][1],
+            rows[0][2],
+            rows[0][3],
+            rows[0][4],
+            rows[0][5],
+            rows[0][0]
+        )
+        return race
+    return False
+
+def get_all_players():
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT count(*) FROM player;')
+    rows = cur.fetchall()
+    p = []
+    t_rows = rows[0][0]
+
+    for i in range(1, t_rows+1):
+        t = get_player(i)
+        p.append(t)
+        
+    return p
+
+def get_all_classes():
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT count(*) FROM class;')
+    rows = cur.fetchall()
+    c = []
+    t_rows = rows[0][0]
+
+    for i in range(1, t_rows+1):
+        t = get_class(i)
+        c.append(t)
+        
+    return c
+    
+def get_all_races():
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT count(*) FROM race;')
+    rows = cur.fetchall()
+    r = []
+    t_rows = rows[0][0]
+
+    for i in range(1, t_rows+1):
+        t = get_race(i)
+        r.append(t)
+        
+    return r
+get_all_races()
 def update_player(player):
     conn = get_connection()
     cur = conn.cursor()
