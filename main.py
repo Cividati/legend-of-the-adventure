@@ -2,6 +2,7 @@ import database as db
 import classes as c
 import random as r
 import time as t
+import os
 
 def default_values():
 
@@ -45,3 +46,68 @@ def default_values():
         db.create_iten(it)
 
 default_values()
+
+def main():
+    os.system('cls')
+    print('Welcome to the legend of the adventure!')
+    op = input('0. Exit\n1. Create character\n2. Load character\n3. Credits\nR. ')
+    player = c.player('')
+    os.system('cls')
+    if op == '1':
+        # Creating character
+        
+        print('\nCreating character')
+
+        name = input('Name: ')
+
+        totalC = db.get_all_classes()
+        print()
+        print('Choose your class!')
+        print('id -  name  - con - str - int - spd')
+        for i in totalC:
+            print(i.id,'-',i.name,'-',i.con,'-',i.str,'-',i.int,'-',i.spd)
+
+        clas_id = input('Class id: ')
+
+        totalR = db.get_all_races()
+        print('\nChoose your race!')
+        print('id -  name  - con - str - int - spd')
+        for i in totalR:
+            print(i.id,'-',i.name,'-',i.con,'-',i.str,'-',i.int,'-',i.spd)
+            
+        race_id = input('\nRace id: ')
+
+        p = c.player(name, id_class=clas_id, id_race=race_id)
+        db.create_player(p)
+        db.get_player(p.id)
+        p.show()
+
+        print('\nPlayer created!')
+
+    elif op == '2':
+        # Loading character
+        print('loading character')
+        # Creating character
+        i = 0
+        print('Choose yout character')
+        totalP = db.get_all_players()
+        for i in totalP:
+            print(i.id,'-',i.name)
+
+        op = input('Select your player id: ')
+        player = db.get_player(op)
+
+        print(player.name, 'selected!')
+        player.show()
+
+    elif op == '3':
+        # Credits
+        os.system('cls')
+        print('This game is a ')
+    
+    else:
+        print('see you next time!')
+        pass
+
+
+main()
