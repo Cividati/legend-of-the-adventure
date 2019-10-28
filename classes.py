@@ -1,6 +1,5 @@
 import random as r
 import time as t
-import database as db
 
 class player:
 
@@ -23,19 +22,20 @@ class player:
         self.spd = spd
 
     def show(self):
-        print('\nYour character...\n')
+        import database as db
+
+        print('\nTake a look in your character...\n')
         print('Name:', self.name)
         print('Level:', self.level)
         print('Exp:', self.exp)
         print('Class:', db.get_class(self.id_class).name)
         print('Race:', db.get_race(self.id_race).name)
         print('Life:', self.life)
-        print('Mana: ', self.mana)
+        print('Mana:', self.mana)
         print('Con:', self.con)
         print('Str:', self.str)
         print('Int:', self.int)
         print('Spd:', self.spd)
-
 
 class race:
 
@@ -61,7 +61,7 @@ class clas:
         self.int = Int
         self.spd = spd
 
-class iten:
+class item:
 
     def __init__(self, name, description = '',
     con = r.randint(1,10), Str =  r.randint(1,10), 
@@ -74,4 +74,3 @@ class iten:
         self.str = Str
         self.int = Int
         self.spd = spd
-
