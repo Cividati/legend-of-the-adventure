@@ -19,9 +19,9 @@ def create_database():
     # creating the databse 
 
     try:
-        # Create table iten
+        # Create table item
         cursor.execute("""
-       CREATE TABLE IF NOT EXISTS iten(
+        CREATE TABLE IF NOT EXISTS item(
             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
             name INTEGER NOT NULL,
             description CHAR NOT NULL,
@@ -32,7 +32,7 @@ def create_database():
         );
         """)
     except sqlite3.Error as e:
-        print('iten error:',e)
+        print('item error:',e)
 
     try:
         # Create table race
@@ -80,9 +80,9 @@ def create_database():
             str FLOAT NOT NULL,
             int FLOAT NOT NULL,
             spd FLOAT NOT NULL,
-            iten_equipped INT
+            item_equipped INT,
 
-            FOREIGN KEY (iten_equipped) REFERENCES iten(id),
+            FOREIGN KEY (item_equipped) REFERENCES item(id),
             FOREIGN KEY (id_race) REFERENCES race(id),
             FOREIGN KEY (id_class) REFERENCES class(id)
         );
@@ -95,10 +95,10 @@ def create_database():
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS inventory(
             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-            id_iten INTEGER NOT NULL,
+            id_item INTEGER NOT NULL,
             id_player INTEGER NOT NULL,
 
-            FOREIGN KEY (id_iten) REFERENCES iten(id),
+            FOREIGN KEY (id_item) REFERENCES item(id),
             FOREIGN KEY (id_player) REFERENCES player(id)
         );
         """)
@@ -123,11 +123,11 @@ def create_class(clas):
     conn.commit()
     conn.close() 
 
-def create_iten(iten):
+def create_item(item):
     conn = get_connection()
 
-    conn.execute(f"INSERT INTO iten(name, description, con, str, int, spd) VALUES( "
-        f"'{iten.name}', '{iten.description}', '{iten.con}', '{iten.str}', '{iten.int}', '{iten.spd}');")
+    conn.execute(f"INSERT INTO item(name, description, con, str, int, spd) VALUES( "
+        f"'{item.name}', '{item.description}', '{item.con}', '{item.str}', '{item.int}', '{item.spd}');")
     conn.commit()
     conn.close() 
 
@@ -157,15 +157,15 @@ def get_stats(tableName, stat, idName):
 
     return value
 
-def get_iten(value = '', param = 'id'):
+def get_item(value = '', param = 'id'):
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute(f'SELECT * FROM iten WHERE {param} = "{value}";')
+    cur.execute(f'SELECT * FROM item WHERE {param} = "{value}";')
     
     rows = cur.fetchall()
 
     if rows:
-        iten = c.iten(
+        item = c.item(
             rows[0][1],
             rows[0][2],
             rows[0][3],
@@ -174,7 +174,7 @@ def get_iten(value = '', param = 'id'):
             rows[0][6],
             rows[0][0]
         )
-        return iten
+        return item
     return False
 
 def get_player(value = '', param = 'id'):
@@ -243,61 +243,63 @@ def get_race(value = '', param = 'id'):
 def get_all_players():
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute('SELECT count(*) FROM player;')
+    cur.execute('SELECT * FROM player;')
     rows = cur.fetchall()
     p = []
-    t_rows = rows[0][0]
-
-    for i in range(1, t_rows+1):
-        t = get_player(i)
-        p.append(t)
-        
+    for i in rows:
+        player = get_player(i[0])
+        p.append(player)
     return p
 
 def get_all_classes():
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute('SELECT count(*) FROM class;')
+    cur.execute('SELECT * FROM class;')
     rows = cur.fetchall()
     c = []
-    t_rows = rows[0][0]
-
-    for i in range(1, t_rows+1):
-        t = get_class(i)
-        c.append(t)
-        
+    for i in rows:
+        clas = get_class(i[0])
+        c.append(clas)
     return c
     
 def get_all_races():
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute('SELECT count(*) FROM race;')
+    cur.execute('SELECT * FROM race;')
     rows = cur.fetchall()
     r = []
-    t_rows = rows[0][0]
-
-    for i in range(1, t_rows+1):
-        t = get_race(i)
-        r.append(t)
-        
+    for i in rows:
+        race = get_race(i[0])
+        r.append(race)
     return r
-get_all_races()
+
+def get_player_items(player):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(f'SELECT * FROM inventory WHERE id_player = {player.id};')
+    rows = cur.fetchall()
+    it = []
+    for i in rows:
+        item = get_item(i[1])
+        it.append(item)
+    return it
+
 def update_player(player):
     conn = get_connection()
     cur = conn.cursor()
     cur.execute(f'UPDATE player SET'
-    f' name = "{player.name}",'
-    f' level = "{player.level}",'
-    f' exp = "{player.exp}",'
-    f' id_class = "{player.id_class}",'
-    f' id_race = "{player.id_race}",'
-    f' life = "{player.life}",'
-    f' mana = "{player.mana}",'
-    f' con = "{player.con}",'
-    f' str = "{player.str}",'
-    f' int = "{player.int}",'
-    f' spd = "{player.name}"'
-    f' WHERE id = "{player.id}";')
+                f' name = "{player.name}",'
+                f' level = "{player.level}",'
+                f' exp = "{player.exp}",'
+                f' id_class = "{player.id_class}",'
+                f' id_race = "{player.id_race}",'
+                f' life = "{player.life}",'
+                f' mana = "{player.mana}",'
+                f' con = "{player.con}",'
+                f' str = "{player.str}",'
+                f' int = "{player.int}",'
+                f' spd = "{player.name}"'
+                f' WHERE id = "{player.id}";')
     conn.commit()
 
 def rm_player(player):
@@ -312,17 +314,22 @@ def update_stats(tableName, stat, value, idName):
     cur.execute(f"UPDATE {tableName} SET {stat} = {value} WHERE id = {idName};")
     conn.commit()
 
-def att_iten(player, iten):
+def att_item(player, item):
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute(f"INSERT INTO inventory(id_player, id_iten) VALUES("
-    f"{player.id},{iten.id});")
+    cur.execute(f"INSERT INTO inventory(id_player, id_item) VALUES("
+    f"{player.id},{item.id});")
     conn.commit()
 
-def rm_iten(player,iten):
+def rm_item(player, item):
     conn = get_connection()
     cur = conn.cursor()
     cur.execute(f"DELETE FROM inventory WHERE "
-    f"id_player = {player.id} AND id_iten = {iten.id};")
+    f"id_player = {player.id} AND id_item = {item.id};")
     conn.commit()
-    
+
+def equip_item(player, item):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(f"UPDATE player SET item_equipped = {item.id} WHERE id = {player.id};")
+    conn.commit()
