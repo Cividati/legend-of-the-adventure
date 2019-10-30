@@ -80,7 +80,7 @@ def create_database():
             str FLOAT NOT NULL,
             int FLOAT NOT NULL,
             spd FLOAT NOT NULL,
-            item_equipped INT,
+            item_equipped INT DEFAULT 0,
 
             FOREIGN KEY (item_equipped) REFERENCES item(id),
             FOREIGN KEY (id_race) REFERENCES race(id),
@@ -197,6 +197,7 @@ def get_player(value = '', param = 'id'):
             rows[0][9],
             rows[0][10],
             rows[0][11],
+            rows[0][11],
             rows[0][0]
         )
         return player
@@ -298,7 +299,8 @@ def update_player(player):
                 f' con = "{player.con}",'
                 f' str = "{player.str}",'
                 f' int = "{player.int}",'
-                f' spd = "{player.name}"'
+                f' spd = "{player.spd}",'
+                f' item_equipped = "{player.item_equipped}"'
                 f' WHERE id = "{player.id}";')
     conn.commit()
 
@@ -315,6 +317,7 @@ def update_stats(tableName, stat, value, idName):
     conn.commit()
 
 def att_item(player, item):
+    # attribute a item to a player
     conn = get_connection()
     cur = conn.cursor()
     cur.execute(f"INSERT INTO inventory(id_player, id_item) VALUES("
