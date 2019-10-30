@@ -8,11 +8,11 @@ def default_values():
 
     db.create_database()
     clas =[
-        c.clas('Paladin', 15, 7, 5, 5),
-        c.clas('Priest', 5, 2, 10, 4),
-        c.clas('Mage', 7, 3, 10, 3),
-        c.clas('Druid', 7, 7, 7, 7),
-        c.clas('Warlock', 5, 2, 10, 3)
+        c.clas('Paladin', 7, 4, 2, 2),
+        c.clas('Priest', 4, 1, 5, 2),
+        c.clas('Mage', 4, 1, 5, 2),
+        c.clas('Druid', 4, 4, 4, 4),
+        c.clas('Warlock', 2, 1, 5, 2)
         ]
     
     for cl in clas:
@@ -20,9 +20,9 @@ def default_values():
 
     race = [
         c.race('Human', 5, 5, 5, 5),
-        c.race('Elf', 4, 3, 7, 6),
-        c.race('Orc', 7, 8, 2, 3),
-        c.race('Dwarf', 5, 9, 6, 2)
+        c.race('Elf', 2, 1, 4, 3),
+        c.race('Orc', 3, 4, 1, 1),
+        c.race('Dwarf', 2, 4, 3, 2)
         ]
 
     for ra in race:
@@ -39,9 +39,9 @@ def default_values():
         db.create_player(pl)
 
     iten =[
-        c.iten('Machado de Assis', 'Um machado feito pelos deuses da literatura brasileira', 10,10,10,10),
-        c.iten('Espada de São Darwin', 'Espada feita do primeiro minério descoberto', 2, 7, 2, 4),
-        c.iten('Cajado de Aristóteles', 'Cajado abençoado por Aristóteles', 0, 2, 10, 5)
+        c.item('Machado de Assis', 'Um machado feito pelos deuses da literatura brasileira', 10,10,10,10),
+        c.item('Espada de São Darwin', 'Espada feita do primeiro minério descoberto', 2, 7, 2, 4),
+        c.item('Cajado de Aristóteles', 'Cajado abençoado por Aristóteles', 0, 2, 10, 5)
         ]
 
     for it in iten:
@@ -132,18 +132,6 @@ def main():
 def play(player):
     os.system('cls')
     print('Here you start your adventure!')
-    mod = input('Select your difficult:\n1.Easy\n2.Medium\n3.Hard\nR.')
-
-    if mod == '1':
-        mod = 1
-    elif mod == '2':
-        mod = 0.65
-    elif mod == '3':
-        mod = 0.37
-    else:
-        mod = 1
-    os.system('cls')
-    print('Difficult modifier switch to', mod)
     op = -1
     while op != '0':
         op = input('0.Exit\n1.Stash\n2.Combat\n3.View character\nR.')
@@ -168,7 +156,9 @@ def play(player):
                 print('You have no items :(\nKill some mobs to get some items')
         
         elif op == '2':
-            print('combat building...')
+            
+            enemy = c.player('Mosquito', 1, 30, 2, 2)
+            player.fight(enemy)
 
         elif op == '3':
             player.show()
@@ -176,5 +166,7 @@ def play(player):
 
         else:
             print('invalid option')
-main()
 
+
+#default_values()            
+main()
