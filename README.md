@@ -12,4 +12,4 @@ Em seguida, deve instalar os requerimentos para o projeto
 ``` pip install -r requirements.txt```
 
 ### Modelo Entidade Relacionamento
-![alt text](https://imgur.com/a/dFnu0PA)
+![alt text](https://imgur.com/ZadLAdC)
