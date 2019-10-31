@@ -1,3 +1,4 @@
+from datetime import datetime as dt
 import database as db
 import classes as c
 import random as r
@@ -52,7 +53,7 @@ def main():
     print('Welcome to the legend of the adventure!')
     op = -1
     while op != '0':
-        op = input('0. Exit\n1. Create character\n2. Load character\n3. Credits\nR. ')
+        op = input('0. Exit\n1. Create character\n2. Load character\n3. Credits\n4. Set Database\nR. ')
         player = c.player('')
         os.system('cls')
         if op == '1':
@@ -112,6 +113,8 @@ def main():
             os.system('cls')
             if op == '1':
                 print(player.name+' selected!')
+                db.update_last_login(player)
+                
                 play(player)
             elif op == '2':
                 print('Operation aborted')
@@ -122,6 +125,10 @@ def main():
             os.system('cls')
             print('This game is made full of love ♥')
         
+        elif op == '4':
+            print('Setting default values...')
+            default_values()        
+
         elif op == '0':
             print('see you next time')
             pass
@@ -166,7 +173,5 @@ def play(player):
 
         else:
             print('invalid option')
-
-
-#default_values()            
+        
 main()
