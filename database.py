@@ -2,6 +2,7 @@ import sqlite3
 import os
 import classes as c
 import pandas as pd
+from datetime import datetime as dt
 
 dir_path = os.path.dirname(__file__)
 
@@ -23,8 +24,8 @@ def create_database():
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS item(
             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-            name INTEGER NOT NULL,
-            description CHAR NOT NULL,
+            name VARCHAR(45) NOT NULL,
+            description VARCHAR(200) NOT NULL,
             con FLOAT NOT NULL,
             str FLOAT NOT NULL,
             int FLOAT NOT NULL,
@@ -39,7 +40,7 @@ def create_database():
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS race(
             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-            name INTEGER NOT NULL,
+            name VARCHAR(45) NOT NULL,
             con FLOAT NOT NULL,
             str FLOAT NOT NULL,
             int FLOAT NOT NULL,
@@ -54,7 +55,7 @@ def create_database():
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS class(
             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-            name INTEGER NOT NULL,
+            name VARCHAR(45) NOT NULL,
             con FLOAT NOT NULL,
             str FLOAT NOT NULL,
             int FLOAT NOT NULL,
@@ -69,7 +70,7 @@ def create_database():
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS player(
             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-            name CHAR(45) NOT NULL,
+            name VARCHAR(45) NOT NULL,
             level int NOT NULL,
             exp FLOAT NOT NULL,
             id_class INT NOT NULL,
@@ -103,7 +104,21 @@ def create_database():
         );
         """)
     except sqlite3.Error as e:
-        print('storage error:',e)
+        print('inventory error:',e)
+
+    try:
+        # Create table last_login
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS last_login(
+            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            id_player INTEGER NOT NULL,
+            data DATETIME NOT NULL,
+
+            FOREIGN KEY (id_player) REFERENCES player(id)
+        );
+        """)
+    except sqlite3.Error as e:
+        print('last_login error:',e)
         
     conn.close()
 
@@ -144,6 +159,12 @@ def create_player(player):
     conn.execute(f"INSERT INTO player(name, level, exp, id_class, id_race, life, mana, con, str, int, spd) VALUES(" 
         f"'{player.name}', '{player.level}', '{player.exp}', '{player.id_class}', '{player.id_race}',"
         f"'{player.life}', '{player.mana}', '{player.con}', '{player.str}', '{player.int}', '{player.spd}');")
+    conn.commit()
+
+    # pegar o id do player buscando o mesmo pelo nome
+    player = get_player(player.name, 'name')
+    now = dt.now().strftime("%m/%d/%Y %H:%M:%S")    
+    conn.execute(f"INSERT INTO last_login(id_player, data) VALUES({player.id}, '{now}')")
     conn.commit()
     conn.close()    
 
@@ -314,6 +335,13 @@ def update_stats(tableName, stat, value, idName):
     conn = get_connection()
     cur = conn.cursor()
     cur.execute(f"UPDATE {tableName} SET {stat} = {value} WHERE id = {idName};")
+    conn.commit()
+
+def update_last_login(player):
+    conn = get_connection()
+    cur = conn.cursor()
+    now = dt.now().strftime("%m/%d/%Y %H:%M:%S") 
+    cur.execute(f"UPDATE last_login SET data = '{now}' WHERE id_player = {player.id};")
     conn.commit()
 
 def att_item(player, item):
