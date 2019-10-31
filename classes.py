@@ -42,30 +42,36 @@ class player:
         import os
         import database as db
         print('\nA wild '+enemy.name+' appears!')
+        initial_life = self.life
+        while enemy.life > 0 or self.life > 0:
+             
+            print()
+            print(self.name+'-'+str(self.life)+' X '+str(enemy.life)+'-'+enemy.name)
+            t.sleep(1)
 
-        while enemy.life > 0:
-            #os.system('cls')
-            stat = input('Use\n1.Str\n2.Int\n3.Spd\nR.')
-            if stat == '1':
-                stat = self.str
-            elif stat == '2':
-                stat = self.int
-            elif stat == '3':
-                stat = self.spd
-            else: stat = self.str  
-
-            print('\nYou try to attack '+enemy.name+':'+str(enemy.life))
-
+            #player turn
             dice = r.randint(1,20)
-            print('You roll: '+str(dice))
+            print(self.name+' roll: '+str(dice))
             if dice >= enemy.con:
-                totalHit = stat
-                
-                print('You hit:', (totalHit)) 
-                enemy.life = enemy.life - totalHit
-            else: print('You miss the attack!')
+                totalHit = self.str + r.randint(1,4)
+                print(self.name+' hit:'+str(totalHit)) 
+                enemy.life -= totalHit
+            else: print(self.name+' miss the attack!')
+
+            #enemy turn
+            dice = r.randint(1,20)
+            print(enemy.name+' roll: '+str(dice))
+            if dice >= enemy.con:
+                totalHit = enemy.str + r.randint(1,4)
+                print(enemy.name+' hit:'+str(totalHit)) 
+                self.life -= totalHit
+            else: print(enemy.name+' miss the attack!')
+
+        print()
         print('You win '+str(enemy.exp)+' exp!')
-        self.exp += self.exp + enemy.exp
+        self.exp += enemy.exp
+        self.life = initial_life
+
         db.update_player(self)
 
 class race:
