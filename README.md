@@ -13,3 +13,7 @@ Em seguida, deve instalar os requerimentos para o projeto
 
 ### Modelo Entidade Relacionamento
 ![alt text](https://i.imgur.com/ZadLAdC.jpg)
+
+### Autor
+- Rubens Cividati
+
