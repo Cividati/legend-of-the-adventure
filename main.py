@@ -53,7 +53,7 @@ def main():
     print('Welcome to the legend of the adventure!')
     op = -1
     while op != '0':
-        op = input('0. Exit\n1. Create character\n2. Load character\n3. Credits\n4. Set Database\nR. ')
+        op = input('0.Exit\n1.Create character\n2.Load character\n3.Credits\n4.Set Database\nR.')
         player = c.player('')
         os.system('cls')
         if op == '1':
@@ -71,7 +71,7 @@ def main():
                 print(i.id,'-',i.name,'-',i.con,'-',i.str,'-',i.int,'-',i.spd)
 
             clas_id = input('Class id: ')
-            print('You have chosed '+ db.get_class(clas_id).name)
+            print('You have chosen '+ db.get_class(clas_id).name)
 
             totalR = db.get_all_races()
             print('\nChoose your race!')
@@ -80,7 +80,7 @@ def main():
                 print(i.id,'-',i.name,'-',i.con,'-',i.str,'-',i.int,'-',i.spd)
                 
             race_id = input('Race id: ')
-            print('You have chosed '+ db.get_race(race_id).name)
+            print('You have chosen '+ db.get_race(race_id).name)
 
             p = c.player(name, id_class=clas_id, id_race=race_id)
             db.create_player(p)
@@ -126,7 +126,8 @@ def main():
             print('This game is made full of love ♥')
         
         elif op == '4':
-            print('Setting default values...')
+            # Set default values
+            print('Setting database...\nDone!')
             default_values()        
 
         elif op == '0':
@@ -141,7 +142,7 @@ def play(player):
     print('Here you start your adventure!')
     op = -1
     while op != '0':
-        op = input('0.Exit\n1.Stash\n2.Combat\n3.View character\nR.')
+        op = input('0.Exit\n1.Stash\n2.Combat\n3.View character\n4.Level up\nR.')
         os.system('cls')
         if op == '0':
             exit()
@@ -164,12 +165,20 @@ def play(player):
         
         elif op == '2':
             
-            enemy = c.player('Mosquito', 1, 30, 2, 2)
-            player.fight(enemy)
+            enemy1 = c.player('Mosquito', 1, 30, 2, 2)
+            enemy2 = c.player('Balthazar', 2, 45, 2, 3)
+            #enemy3 = c.player('Melkor', 3, 50, 3, 4)
+
+            player.fight(enemy1)
+            player.fight(enemy2)
+            #player.fight(enemy3)
 
         elif op == '3':
             player.show()
             print()
+
+        elif op == '4':
+            player.levelUp()
 
         else:
             print('invalid option')
