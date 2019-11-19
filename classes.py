@@ -6,7 +6,7 @@ import os
 class player:
 
     def __init__(self, name, level = 1, exp = 0, id_class = 1, 
-    id_race = 1, life = 10, mana = 10  , con = r.randint(1,10),
+    id_race = 1, life = 10, mana = 10, con = r.randint(1,10),
     Str = r.randint(1,10), Int = r.randint(1,10), 
     spd = r.randint(1,10), item_equipped = 0, iD = 0):
     
@@ -16,12 +16,12 @@ class player:
         self.exp = exp
         self.id_class = id_class
         self.id_race = id_race
-        self.life = life * self.level
-        self.mana = mana * self.level
-        self.con = con * self.level
-        self.str = Str * self.level
-        self.int = Int * self.level
-        self.spd = spd * self.level
+        self.life = life 
+        self.mana = mana 
+        self.con = con 
+        self.str = Str 
+        self.int = Int 
+        self.spd = spd 
         self.item_equipped = item_equipped
 
     def show(self):
@@ -33,52 +33,63 @@ class player:
         print('Exp:', self.exp)
         print('Class:', db.get_class(self.id_class).name)
         print('Race:', db.get_race(self.id_race).name)
-        print('Life:', self.life)
-        print('Mana:', self.mana)
-        print('Con:', self.con)
-        print('Str:', self.str)
-        print('Int:', self.int)
-        print('Spd:', self.spd)
+        print('Life:', self.life,'+ (',db.get_item(self.item_equipped).con/2 if self.item_equipped!=0 else '0', ')')
+        print('Mana:', self.mana,'+ (',db.get_item(self.item_equipped).int/2 if self.item_equipped!=0 else '0', ')')
+        print('Con:', self.con,'+ (',db.get_item(self.item_equipped).con if self.item_equipped!=0 else '0', ')')
+        print('Str:', self.str,'+ (',db.get_item(self.item_equipped).str if self.item_equipped!=0 else '0', ')')
+        print('Int:', self.int,'+ (',db.get_item(self.item_equipped).int if self.item_equipped!=0 else '0', ')')
+        print('Spd:', self.spd,'+ (',db.get_item(self.item_equipped).spd if self.item_equipped!=0 else '0', ')')
+        print('Item:', db.get_item(self.item_equipped).name if self.item_equipped!=0 else 'none')
 
     def fight(self, enemy):
         
-        print('\nA wild '+enemy.name+' appears!')
         initial_life = self.life
+        round = 0
         while enemy.life > 0 and self.life > 0:
              
-            print()
+            os.system('cls')
+            round +=1
+            print('Round: '+str(round))
             print(self.name+' - '+str(self.life)+' X '+str(enemy.life)+' - '+enemy.name)
             t.sleep(1)
 
             #player turn
             dice = r.randint(1,20)
             #print(self.name+' roll: '+str(dice))
-            if dice >= enemy.con:
-                totalHit = self.str + r.randint(1,4)
+            if dice + self.str/5 >= enemy.con + db.get_item(enemy.item_equipped).con if enemy.item_equipped!=0 else enemy.con:
+                totalHit = self.str + r.randint(1,4) + db.get_item(self.item_equipped).str if self.item_equipped!=0 else self.str + r.randint(1,4)
                 print(self.name+' hit: '+str(totalHit)) 
                 enemy.life -= totalHit
             else: print(self.name+' miss the attack!')
             if enemy.life <=0 : break
             #enemy turn
+            t.sleep(1)
             dice = r.randint(1,20)
             #print(enemy.name+' roll: '+str(dice))
-            if dice >= enemy.con:
-                totalHit = enemy.str + r.randint(1,4)
+            if dice + enemy.str/5 >= self.con + db.get_item(self.item_equipped).con if self.item_equipped!=0 else self.con:
+                totalHit = enemy.str + r.randint(1,4) + db.get_item(enemy.item_equipped).str if enemy.item_equipped!=0 else enemy.str + r.randint(1,4)
                 print(enemy.name+' hit: '+str(totalHit)) 
                 self.life -= totalHit
             else: print(enemy.name+' miss the attack!')
-            if self.life <0 : break
+            if self.life + db.get_item(self.item_equipped).con/2 <0 : break
+            t.sleep(1.5)
 
         print()
-        if(self.life > 0):
-            print(self.name+ ' won '+str(enemy.exp)+' exp!')    
+        if(self.life + db.get_item(self.item_equipped).con/2 > 0):
+            print(self.name+ 'have defeated',enemy.name)
+            print('You earned '+str(enemy.exp)+' exp!')    
             self.exp += enemy.exp
-            self.life = initial_life
-
+            if(enemy.item_equipped != 0):
+                item = db.get_item(enemy.item_equipped)
+                db.att_item(self, item)
+                print('You drop the '+item.name)
+        
         else:
-            print('You have died!')
+            print(enemy.name,'have killed you!')
 
+        self.life = initial_life
         db.update_player(self)
+        t.sleep(3)
 
     def levelUp(self):
         if self.exp >= self.level*100:
@@ -99,6 +110,7 @@ class player:
                 if op == '1':
                     self.con += 1
                     print('You have added 1 point in Con!')
+                    self.life +=2
                     
                 elif op == '2':
                     self.str += 1

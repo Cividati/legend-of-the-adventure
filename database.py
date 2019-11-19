@@ -218,7 +218,7 @@ def get_player(value = '', param = 'id'):
             rows[0][9],
             rows[0][10],
             rows[0][11],
-            rows[0][11],
+            rows[0][12],
             rows[0][0]
         )
         return player

@@ -157,22 +157,45 @@ def play(player):
                     print(i.id,'-',i.name)
                 op = input ('Select your item to equip: ')      
                 item = db.get_item(op)
-                db.equip_item(player, item)
                 os.system('cls')
+                db.equip_item(player, item)
                 print(item.name+' equipped!')
+                player = db.get_player(player.id)
             else:
                 print('You have no items :(\nKill some mobs to get some items')
         
         elif op == '2':
             
-            enemy1 = c.player('Mosquito', 1, 30, 2, 2)
-            enemy2 = c.player('Balthazar', 2, 45, 2, 3)
-            #enemy3 = c.player('Melkor', 3, 50, 3, 4)
-
-            player.fight(enemy1)
-            player.fight(enemy2)
-            #player.fight(enemy3)
-
+            os.system('cls')
+            print('1.Forest\n2.Dungeon\n3.Desert')
+            op = input('R.')
+            os.system('cls')
+            if op == '1':
+                print('You have entered into the forest.')
+                t.sleep(1.5)
+                enemy1 = c.player('Mosquito', 1, 20, 1, 1, 15, 15, 6, 4)
+                enemy2 = c.player('Lion', 2, 35, 1, 1, 32, 0, 10, 10)
+                enemy3 = c.player('Ent', 4, 120, 1, 1, 55, 20, 11, item_equipped=3)
+                player.fight(enemy1)
+                player.fight(enemy2)
+                player.fight(enemy3)
+            elif op == '2':
+                print('You have entered into the dungeon.')
+                t.sleep(1.5)
+                enemy1 = c.player('Goblin', 1, 20, 1, 1, 15, 15, 6, 4)
+                enemy2 = c.player('Troll', 2, 35, 1, 1, 32, 0, 10, 10)
+                enemy3 = c.player('Orc Beserker', 4, 120, 1, 1, 73, 25, 13, 13, 0, 0, item_equipped=2)
+                player.fight(enemy1)
+                player.fight(enemy2)
+                player.fight(enemy3)
+            elif op == '3':
+                print('You have entered into the desert.')
+                t.sleep(1.5)
+                enemy1 = c.player('Wasp', 1, 20, 1, 1, 15, 15, 6, 4)
+                enemy2 = c.player('Skorpion', 2, 35, 1, 1, 32, 0, 10, 10)
+                player.fight(enemy1)
+                player.fight(enemy2)
+            op = 2
         elif op == '3':
             player.show()
             print()
