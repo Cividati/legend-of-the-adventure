@@ -27,7 +27,7 @@ class player:
     def show(self):
         import database as db
 
-        print('\nTake a look in your character...\n')
+        print('Take a look in your character...\n')
         print('Name:', self.name)
         print('Level:', self.level)
         print('Exp:', self.exp)
@@ -43,53 +43,58 @@ class player:
 
     def fight(self, enemy):
         
+        player = self
         initial_life = self.life
         round = 0
-        while enemy.life > 0 and self.life > 0:
+        while enemy.life > 0 and player.life > 0:
              
             os.system('cls')
             round +=1
             print('Round: '+str(round))
-            print(self.name+' - '+str(self.life)+' X '+str(enemy.life)+' - '+enemy.name)
+            print(player.name+' - '+str(player.life)+' X '+str(enemy.life)+' - '+enemy.name)
             t.sleep(1)
 
             #player turn
             dice = r.randint(1,20)
-            #print(self.name+' roll: '+str(dice))
-            if dice + self.str/5 >= enemy.con + db.get_item(enemy.item_equipped).con if enemy.item_equipped!=0 else enemy.con:
-                totalHit = self.str + r.randint(1,4) + db.get_item(self.item_equipped).str if self.item_equipped!=0 else self.str + r.randint(1,4)
-                print(self.name+' hit: '+str(totalHit)) 
+            #print(player.name+' roll: '+str(dice))
+            if dice + player.str/5 >= enemy.con + db.get_item(enemy.item_equipped).con if enemy.item_equipped!=0 else enemy.con:
+                totalHit = player.str + r.randint(1,4) + db.get_item(player.item_equipped).str if player.item_equipped!=0 else player.str + r.randint(1,4)
+                print(player.name+' hit: '+str(totalHit)) 
                 enemy.life -= totalHit
-            else: print(self.name+' miss the attack!')
+            else: print(player.name+' miss the attack!')
+            t.sleep(1)
             if enemy.life <=0 : break
             #enemy turn
-            t.sleep(1)
             dice = r.randint(1,20)
             #print(enemy.name+' roll: '+str(dice))
-            if dice + enemy.str/5 >= self.con + db.get_item(self.item_equipped).con if self.item_equipped!=0 else self.con:
+            if dice + enemy.str/5 >= player.con + db.get_item(player.item_equipped).con if player.item_equipped!=0 else player.con:
                 totalHit = enemy.str + r.randint(1,4) + db.get_item(enemy.item_equipped).str if enemy.item_equipped!=0 else enemy.str + r.randint(1,4)
                 print(enemy.name+' hit: '+str(totalHit)) 
-                self.life -= totalHit
+                player.life -= totalHit
             else: print(enemy.name+' miss the attack!')
-            if self.life + db.get_item(self.item_equipped).con/2 <0 : break
+            if player.life <= 0 : break
             t.sleep(1.5)
 
         print()
-        if(self.life + db.get_item(self.item_equipped).con/2 > 0):
-            print(self.name+ 'have defeated',enemy.name)
-            print('You earned '+str(enemy.exp)+' exp!')    
+        if(player.life > 0):
+            # you win
+            print(player.name+ ' have defeated '+enemy.name)
+            print('You got '+str(enemy.exp)+' exp!')    
             self.exp += enemy.exp
             if(enemy.item_equipped != 0):
                 item = db.get_item(enemy.item_equipped)
                 db.att_item(self, item)
                 print('You drop the '+item.name)
+            self.life = initial_life
+            db.update_player(self)
+            t.sleep(3)
+            return True
         
         else:
-            print(enemy.name,'have killed you!')
-
-        self.life = initial_life
-        db.update_player(self)
-        t.sleep(3)
+            print(enemy.name+' have killed you!')
+            self.life = initial_life
+            t.sleep(3)
+            return False
 
     def levelUp(self):
         if self.exp >= self.level*100:
@@ -126,7 +131,9 @@ class player:
                 print()
                 db.update_player(self)
         else:
-            print("You need "+str(self.level*100-self.exp)+" of exp to level up, sorry :(")
+            print("You don't have amount of exp to level up")
+            print("You need more "+str(self.level*100-self.exp)+" of exp to level up")
+            print("sorry :(")
 
 class race:
 

@@ -30,10 +30,7 @@ def default_values():
         db.create_race(ra)
 
     player = [
-        c.player('Rubens', 1, 0, 1, 1),
-        c.player('Tavão', 1, 0, 1, 4),
-        c.player('Sader', 1, 0, 4, 2),
-        c.player('Kpis', 1, 0, 1, 1)
+        c.player('Rubens', 1, 0, 1, 1)
         ]
 
     for pl in player:
@@ -49,11 +46,10 @@ def default_values():
         db.create_item(it)
 
 def main():
-    os.system('cls')
-    print('Welcome to the legend of the adventure!')
     op = -1
+    os.system('cls')
     while op != '0':
-        op = input('0.Exit\n1.Create character\n2.Load character\n3.Credits\n4.Set Database\nR.')
+        op = input('Welcome to the legend of the adventure!\n0.Exit\n1.Create character\n2.Load character\n3.Credits\n4.Set Database\nR.')
         player = c.player('')
         os.system('cls')
         if op == '1':
@@ -96,39 +92,59 @@ def main():
                 print('Operation aborted')
 
         elif op == '2':
-            # Loading character
-            print('loading character')
-            # Creating character
-            i = 0
-            print('Choose yout character')
-            totalP = db.get_all_players()
-            for i in totalP:
-                print(i.id,'-',i.name)
+            op = '123456'
+            while int(op) > len(db.get_all_players()):
+                # Loading character
+                os.system('cls')
+                print('loading character')
+                # Creating character
+                print('Choose yout character')
+                print('0 - EXIT')
+                totalP = db.get_all_players()
+                for i in totalP:
+                    print(i.id,'-',i.name)
 
-            op = input('Select your player id: ')
-            player = db.get_player(op)
-            player.show()
+                op = input('Select your character id: ')
+                os.system('cls')
+                if op == '0': 
+                    op = 'null'
+                    break
 
-            op = input('\nAre u sure?\n1.Yes\n2.No\nR.')
-            os.system('cls')
-            if op == '1':
-                print(player.name+' selected!')
-                db.update_last_login(player)
-                
-                play(player)
-            elif op == '2':
-                print('Operation aborted')
-            
+                if db.get_player(op):
+
+                    player = db.get_player(op)
+                    player.show()
+
+                    op = input('\nAre you sure?\n1.Yes\n2.No\nR.')
+                    os.system('cls')
+                    if op == '1':
+                        print(player.name+' selected!')
+                        db.update_last_login(player)
+                        
+                        play(player)
+                        break
+                    elif op == '2':
+                        print('Operation aborted')
+                        op = len(db.get_all_players()) +1
+                        break
 
         elif op == '3':
             # Credits
-            os.system('cls')
             print('This game is made full of love ♥')
+            print('Version: 0.15 Alfa')
         
         elif op == '4':
             # Set default values
-            print('Setting database...\nDone!')
-            default_values()        
+            
+            try:
+                with open('database.db', 'r') as f:
+                    print('Database already setted!')
+                    
+            except IOError:
+                print('Setting database...\nDone!')
+                default_values() 
+                
+                      
 
         elif op == '0':
             print('see you next time')
@@ -138,19 +154,18 @@ def main():
             print('invalid option!')
 
 def play(player):
-    os.system('cls')
-    print('Here you start your adventure!')
+    
     op = -1
     while op != '0':
-        op = input('0.Exit\n1.Stash\n2.Combat\n3.View character\n4.Level up\nR.')
+        op = input('Here you start your adventure!\n0.Exit\n1.Stash\n2.Combat\n3.View character\n4.Level up\nR.')
         os.system('cls')
         if op == '0':
-            exit()
+            return
         elif op =='1':
             items = db.get_player_items(player)
 
             if items:
-                
+                # IF player have items on statsh
                 print('Welcome to stash!!')
                 print('This is your items:')
                 for i in items:
@@ -162,6 +177,7 @@ def play(player):
                 print(item.name+' equipped!')
                 player = db.get_player(player.id)
             else:
+                # Player dont have any items on stash
                 print('You have no items :(\nKill some mobs to get some items')
         
         elif op == '2':
@@ -176,31 +192,64 @@ def play(player):
                 enemy1 = c.player('Mosquito', 1, 20, 1, 1, 15, 15, 6, 4)
                 enemy2 = c.player('Lion', 2, 35, 1, 1, 32, 0, 10, 10)
                 enemy3 = c.player('Ent', 4, 120, 1, 1, 55, 20, 11, item_equipped=3)
-                player.fight(enemy1)
-                player.fight(enemy2)
-                player.fight(enemy3)
+
+                if player.fight(enemy1) == True:                    
+                    if player.fight(enemy2) == True:
+                        if player.fight(enemy3) == True:
+
+                            item = db.get_item(3)
+                            os.system('cls')
+                            print('You complete the Forest, Gratzz!')
+                            print('Here is your reward!')
+                            print(item.name+' has been added to your stash!')
+                            db.att_item(player, item)
+                            t.sleep(3.5)
+
+                    
             elif op == '2':
                 print('You have entered into the dungeon.')
                 t.sleep(1.5)
                 enemy1 = c.player('Goblin', 1, 20, 1, 1, 15, 15, 6, 4)
                 enemy2 = c.player('Troll', 2, 35, 1, 1, 32, 0, 10, 10)
                 enemy3 = c.player('Orc Beserker', 4, 120, 1, 1, 73, 25, 13, 13, 0, 0, item_equipped=2)
-                player.fight(enemy1)
-                player.fight(enemy2)
-                player.fight(enemy3)
+                
+                if player.fight(enemy1):
+                    if player.fight(enemy2):
+                        if player.fight(enemy3):
+
+                            item = db.get_item(3)
+                            os.system('cls')
+                            print('You complete the dungeon, Gratzz!')
+                            print('Here is your reward!')
+                            print(item.name+' has been added to your stash!')
+                            db.att_item(player, item)
+                            t.sleep(3.5)
+
             elif op == '3':
                 print('You have entered into the desert.')
                 t.sleep(1.5)
                 enemy1 = c.player('Wasp', 1, 20, 1, 1, 15, 15, 6, 4)
                 enemy2 = c.player('Skorpion', 2, 35, 1, 1, 32, 0, 10, 10)
-                player.fight(enemy1)
-                player.fight(enemy2)
-            op = 2
+                enemy3 = c.player('Sand King', 3, 135, 1, 1, 97, 0, 15, 15, item_equipped=3)
+
+                if player.fight(enemy1):
+                    if player.fight(enemy2):
+                       if player.fight(enemy3):
+
+                            item = db.get_item(3)
+                            os.system('cls')
+                            print('You complete the desert, Gratzz!')
+                            print('Here is your reward!')
+                            print(item.name+' has been added to your stash!')
+                            db.att_item(player, item)
+                            t.sleep(3.5)
         elif op == '3':
+            # Show player ifo
             player.show()
             print()
 
         elif op == '4':
+            # Level up!
             player.levelUp()
 
         else:
