@@ -1,8 +1,7 @@
+from datetime import datetime as dt
+import classes as c
 import sqlite3
 import os
-import classes as c
-import pandas as pd
-from datetime import datetime as dt
 
 dir_path = os.path.dirname(__file__)
 
@@ -29,7 +28,7 @@ def create_database():
             con FLOAT NOT NULL,
             str FLOAT NOT NULL,
             int FLOAT NOT NULL,
-            spd FLOAT NOT NULL
+            spd FLOAT NOT NULL  
         );
         """)
     except sqlite3.Error as e:
@@ -325,7 +324,7 @@ def update_player(player):
                 f' WHERE id = "{player.id}";')
     conn.commit()
 
-def rm_player(player):
+def delete_player(player):
     conn = get_connection()
     cur = conn.cursor()
     cur.execute(f"DELETE FROM player WHERE id = {player.id};")

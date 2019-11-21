@@ -49,12 +49,11 @@ def main():
     op = -1
     os.system('cls')
     while op != '0':
-        op = input('Welcome to the legend of the adventure!\n0.Exit\n1.Create character\n2.Load character\n3.Credits\n4.Set Database\nR.')
+        op = input('Welcome to the legend of the adventure!\n0.Exit\n1.Create character\n2.Load character\n3.Delete Character\n4.Credits\n5.Set Database\nR.')
         player = c.player('')
         os.system('cls')
         if op == '1':
             # Creating character
-            
             print('Creating character')
 
             name = input('Name: ')
@@ -113,6 +112,7 @@ def main():
                 if db.get_player(op):
 
                     player = db.get_player(op)
+
                     player.show()
 
                     op = input('\nAre you sure?\n1.Yes\n2.No\nR.')
@@ -129,13 +129,50 @@ def main():
                         break
 
         elif op == '3':
+            # Delete character
+            op = '123456'
+            while int(op) > len(db.get_all_players()):
+                # Loading character
+                os.system('cls')
+                print('deleting character')
+                # Deleting a character
+                print('Choose yout character')
+                print('0 - EXIT')
+                totalP = db.get_all_players()
+                for i in totalP:
+                    print(i.id,'-',i.name)
+
+                op = input('Select your character id: ')
+                os.system('cls')
+                if op == '0': 
+                    op = 'null'
+                    break
+
+                if db.get_player(op):
+
+                    player = db.get_player(op)
+                    os.system('cls')
+                    player.show()
+
+                    op = input('\nAre you sure?\n1.Yes\n2.No\nR.')
+                    if op == '1':
+                        os.system('cls')
+                        print(player.name+' deleted!')
+                        db.delete_player(player)
+                        
+                        break
+                    elif op == '2':
+                        print('Operation aborted')
+                        op = len(db.get_all_players()) +1
+                        break
+
+        elif op == '4':
             # Credits
             print('This game is made full of love ♥')
             print('Version: 0.15 Alfa')
         
-        elif op == '4':
+        elif op == '5':
             # Set default values
-            
             try:
                 with open('database.db', 'r') as f:
                     print('Database already setted!')
@@ -143,8 +180,6 @@ def main():
             except IOError:
                 print('Setting database...\nDone!')
                 default_values() 
-                
-                      
 
         elif op == '0':
             print('see you next time')
@@ -204,7 +239,6 @@ def play(player):
                             print(item.name+' has been added to your stash!')
                             db.att_item(player, item)
                             t.sleep(3.5)
-
                     
             elif op == '2':
                 print('You have entered into the dungeon.')
@@ -256,6 +290,3 @@ def play(player):
             print('invalid option')
         
 main()
-
-
-
