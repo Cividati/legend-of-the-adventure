@@ -86,7 +86,7 @@ def main():
                 os.system('cls')
                 print(p.name+' created!')
             elif op == '2':
-                db.rm_player(p)
+                db.delete_player(p)
                 os.system('cls')
                 print('Operation aborted')
 
