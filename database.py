@@ -81,6 +81,7 @@ def create_database():
             int FLOAT NOT NULL,
             spd FLOAT NOT NULL,
             item_equipped INT DEFAULT 0,
+            caves TEXT DEFAULT '0,1,1',
 
             FOREIGN KEY (item_equipped) REFERENCES item(id),
             FOREIGN KEY (id_race) REFERENCES race(id),
@@ -218,7 +219,9 @@ def get_player(value = '', param = 'id'):
             rows[0][10],
             rows[0][11],
             rows[0][12],
-            rows[0][0]
+            rows[0][0],
+            rows[0][13]
+
         )
         return player
     return False
@@ -305,6 +308,26 @@ def get_player_items(player):
         it.append(item)
     return it
 
+def get_player_caves(player, pos):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(f'SELECT caves FROM player WHERE id = {player.id};')
+    rows = cur.fetchall()
+    array = rows[0][0].split(',')
+    return array[pos]
+
+def update_player_caves(player, pos, value='1'):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(f'SELECT caves FROM player WHERE id = {player.id};')
+    rows = cur.fetchall()
+    array = rows[0][0].split(',')
+    array[pos] = value
+    array = ','.join(array)
+    print(array)
+    player.caves = array
+    update_player(player)
+
 def update_player(player):
     conn = get_connection()
     cur = conn.cursor()
@@ -320,7 +343,8 @@ def update_player(player):
                 f' str = "{player.str}",'
                 f' int = "{player.int}",'
                 f' spd = "{player.spd}",'
-                f' item_equipped = "{player.item_equipped}"'
+                f' item_equipped = "{player.item_equipped}",'
+                f' caves = "{player.caves}"'
                 f' WHERE id = "{player.id}";')
     conn.commit()
 
@@ -357,6 +381,22 @@ def rm_item(player, item):
     cur.execute(f"DELETE FROM inventory WHERE "
     f"id_player = {player.id} AND id_item = {item.id};")
     conn.commit()
+
+def search_item(player, item):
+    conn = get_connection()
+    cur = conn.cursor()
+    print('player: ', player.id)
+    print('item: ', item.id)
+    cur.execute(f"SELECT * FROM inventory WHERE "
+    f"id_player = {player.id} AND id_item = {item.id};")
+    rows = cur.fetchall()
+    print(rows)
+    it = []
+    for i in rows:
+        print(i)
+        item = get_item(i[1])
+        it.append(item)
+    return it
 
 def equip_item(player, item):
     conn = get_connection()

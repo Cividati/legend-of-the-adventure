@@ -9,21 +9,16 @@ def default_values():
 
     db.create_database()
     clas =[
-        c.clas('Paladin', 7, 4, 2, 2),
-        c.clas('Priest', 4, 1, 5, 2),
-        c.clas('Mage', 4, 1, 5, 2),
-        c.clas('Druid', 4, 4, 4, 4),
-        c.clas('Warlock', 2, 1, 5, 2)
+        c.clas('Guerreiro', 7, 4, 0, 1),
+        c.clas('Arqueiro', 4, 3, 0, 7),
+        c.clas('Feiticeiro', 4, 2, 7, 2)
         ]
     
     for cl in clas:
         db.create_class(cl)
 
     race = [
-        c.race('Human', 5, 5, 5, 5),
-        c.race('Elf', 2, 1, 4, 3),
-        c.race('Orc', 3, 4, 1, 1),
-        c.race('Dwarf', 2, 4, 3, 2)
+        c.race('Human', 5, 5, 5, 5)
         ]
 
     for ra in race:
@@ -37,10 +32,11 @@ def default_values():
         db.create_player(pl)
 
     iten =[
-        c.item('Machado de Assis', 'Um machado feito pelos deuses da literatura brasileira', 10,10,10,10),
-        c.item('Espada de São Darwin', 'Espada feita do primeiro minério descoberto', 2, 7, 2, 4),
-        c.item('Cajado de Aristóteles', 'Cajado abençoado por Aristóteles', 0, 2, 10, 5)
-        ]
+        c.item('Machado de Assis', 'Um machado feito pelos deuses da literatura brasileira', 3, 3, 0, 0),
+        c.item('Espada de São Darwin', 'Espada feita do primeiro minério descoberto', 3, 3, 0, 0),
+        c.item('Cajado de Flamel', 'Cajado abençoado por Aristóteles', 1, 2, 4, 0),
+        c.item('Arco de Sagitário', 'Signo não influenciam, mas um disparo no peito muda o destino de alguém.', 1, 2, 0, 3),
+        c.item('Crucifixo da Madeira da Cruz de Cristo', 'Adquirido em uma liquidação papal de indulgências, Lutero condena isso.', 0, 2, 4, 0)]
 
     for it in iten:
         db.create_item(it)
@@ -218,65 +214,103 @@ def play(player):
         elif op == '2':
             
             os.system('cls')
-            print('1.Forest\n2.Dungeon\n3.Desert')
+            print('1.Floresta\n2.Deserto\n3.Caverna')
+
             op = input('R.')
             os.system('cls')
-            if op == '1':
+            if op == '1' and db.get_player_caves(player, 0) == '0':
                 print('You have entered into the forest.')
                 t.sleep(1.5)
-                enemy1 = c.player('Mosquito', 1, 20, 1, 1, 15, 15, 6, 4)
-                enemy2 = c.player('Lion', 2, 35, 1, 1, 32, 0, 10, 10)
-                enemy3 = c.player('Ent', 4, 120, 1, 1, 55, 20, 11, item_equipped=3)
+                enemy1 = c.player('Mosquito', 1, 5, 1, 1, 5, 5)
+                enemy2 = c.player('Cobra', 2, 10, 1, 1, 10, 15)
+                enemy3 = c.player('Urso', 3, 15, 1, 1, 15, 13, 13)
+                enemy4 = c.player('Leão', 4, 20, 1, 1, 20, 15, 15)
+                enemy5 = c.player('Ent', 5, 40, 1, 1, 40, 17, 17, item_equipped=1)
 
                 if player.fight(enemy1) == True:                    
                     if player.fight(enemy2) == True:
                         if player.fight(enemy3) == True:
+                            if player.fight(enemy4) == True:
+                                if player.fight(enemy5) == True:
 
-                            item = db.get_item(3)
-                            os.system('cls')
-                            print('You complete the Forest, Gratzz!')
-                            print('Here is your reward!')
-                            print(item.name+' has been added to your stash!')
-                            db.att_item(player, item)
-                            t.sleep(3.5)
+                                    item = db.get_item(1)
+                                    os.system('cls')
+                                    print('You complete the Forest, Gratzz!')
+                                    print('Here is your reward!')
+                                    print(item.name+' has been added to your stash!')
+                                    db.att_item(player, item)
+                                    db.update_player_caves(player,0, '1')
+                                    db.update_player_caves(player,1, '0')
+                                    t.sleep(3.5)
+            else: print('Ja terminou para você.')
                     
-            elif op == '2':
-                print('You have entered into the dungeon.')
+            if op == '2' and db.get_player_caves(player, 1) == '0':
+                print('You have entered into the deserto.')
                 t.sleep(1.5)
-                enemy1 = c.player('Goblin', 1, 20, 1, 1, 15, 15, 6, 4)
-                enemy2 = c.player('Troll', 2, 35, 1, 1, 32, 0, 10, 10)
-                enemy3 = c.player('Orc Beserker', 4, 120, 1, 1, 73, 25, 13, 13, 0, 0, item_equipped=2)
+                enemy1 = c.player('Calango', 1, 5, 1, 1, 5, 5)
+                enemy2 = c.player('Camelo', 2, 10, 1, 1, 10, 15)
+                enemy3 = c.player('Babuíno', 3, 15, 1, 1, 15, 13, 13)
+                enemy4 = c.player('Minhocão', 4, 20, 1, 1, 20, 15, 15)
+                enemy5 = c.player('Escorpião Gigante', 5, 40, 1, 1, 40, 17, 17)
+                enemy6 = c.player('Mumia', 6, 60, 1, 1, 60, 19, 19)
+                enemy7 = c.player('Esfinge', 7, 80, 1, 1, 80, 21, 21, item_equipped=2)
                 
                 if player.fight(enemy1):
                     if player.fight(enemy2):
                         if player.fight(enemy3):
+                            if player.fight(enemy4):
+                                if player.fight(enemy5):
+                                    if player.fight(enemy6):
+                                        if player.fight(enemy7):
 
-                            item = db.get_item(3)
-                            os.system('cls')
-                            print('You complete the dungeon, Gratzz!')
-                            print('Here is your reward!')
-                            print(item.name+' has been added to your stash!')
-                            db.att_item(player, item)
-                            t.sleep(3.5)
+                                            item = db.get_item(3)
+                                            os.system('cls')
+                                            print('You complete the dungeon, Gratzz!')
+                                            # colocar condição se o item já existir no inventário do jogador
+                                            print('Here is your reward!')
+                                            print(item.name+' has been added to your stash!')
+                                            db.att_item(player, item)
+                                            
+                                            player.lock_level(0)
+                                            t.sleep(3.5)
 
-            elif op == '3':
-                print('You have entered into the desert.')
+            elif db.get_player_caves(player, 0) == '0':
+                print('Faça a floresta primeiro.')
+            else: print('Já acabou para você.')
+
+            if op == '3' and db.get_player_caves(player, 2) == '0':
+                print('You have entered into the caverna.')
                 t.sleep(1.5)
-                enemy1 = c.player('Wasp', 1, 20, 1, 1, 15, 15, 6, 4)
-                enemy2 = c.player('Skorpion', 2, 35, 1, 1, 32, 0, 10, 10)
-                enemy3 = c.player('Sand King', 3, 135, 1, 1, 97, 0, 15, 15, item_equipped=3)
+                enemy1 = c.player('Rato', 1, 5, 1, 1, 5, 5)
+                enemy2 = c.player('Morcego', 2, 10, 1, 1, 10, 15)
+                enemy3 = c.player('Goblin', 3, 15, 1, 1, 15, 13, 13)
+                enemy4 = c.player('Kobold', 4, 20, 1, 1, 20, 15, 15)
+                enemy5 = c.player('Esqueleto', 5, 40, 1, 1, 40, 17, 17)
+                enemy6 = c.player('Orc', 6, 60, 1, 1, 60, 19, 19)
+                enemy7 = c.player('Troll', 7, 80, 1, 1, 80, 21, 2, item_equipped=2)
+                enemy8 = c.player('O ex da sua mãe', 8, 100, 1, 1, 100, 23, 23)
+                enemy9 = c.player('Dragão', 9, 110, 1, 1, 110, 23, 23, item_equipped=3)
 
                 if player.fight(enemy1):
                     if player.fight(enemy2):
-                       if player.fight(enemy3):
+                        if player.fight(enemy3):
+                            if player.fight(enemy4):
+                                if player.fight(enemy5):
+                                    if player.fight(enemy6):
+                                        if player.fight(enemy7):
+                                            if player.fight(enemy8):
+                                                if player.fight(enemy9):
 
-                            item = db.get_item(3)
-                            os.system('cls')
-                            print('You complete the desert, Gratzz!')
-                            print('Here is your reward!')
-                            print(item.name+' has been added to your stash!')
-                            db.att_item(player, item)
-                            t.sleep(3.5)
+                                                    item = db.get_item(3)
+                                                    os.system('cls')
+                                                    print('You complete the desert, Gratzz!')
+                                                    print('Here is your reward!')
+                                                    print(item.name+' has been added to your stash!')
+                                                    db.att_item(player, item)
+                                                    t.sleep(3.5)
+            elif db.get_player_caves(player, 1) == '0':
+                print('Faça o deserto primeiro.')
+            else: print('Já acabou para você.')
         elif op == '3':
             # Show player ifo
             player.show()
@@ -290,3 +324,9 @@ def play(player):
             print('invalid option')
         
 main()
+p = db.get_player(1)
+print(db.get_player_caves(p, 0))
+db.update_player_caves(p, 0)
+p = db.get_player(1)
+
+print(db.get_player_caves(p, 0))

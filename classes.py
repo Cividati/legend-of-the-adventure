@@ -8,7 +8,7 @@ class player:
     def __init__(self, name, level = 1, exp = 0, id_class = 1, 
     id_race = 1, life = 10, mana = 10, con = r.randint(1,10),
     Str = r.randint(1,10), Int = r.randint(1,10), 
-    spd = r.randint(1,10), item_equipped = 0, iD = 0):
+    spd = r.randint(1,10), item_equipped = 0, iD = 0, caves = '0'):
     
         self.id = iD
         self.name  = name
@@ -23,6 +23,7 @@ class player:
         self.int = Int 
         self.spd = spd 
         self.item_equipped = item_equipped
+        self.caves = caves
 
     def show(self):
         import database as db
@@ -134,6 +135,14 @@ class player:
             print("You don't have amount of exp to level up")
             print("You need more "+str(self.level*100-self.exp)+" of exp to level up")
             print("sorry :(")
+
+    def lock_level(self, levelId):
+        array = self.caves
+        array = array.split(',')
+        array[levelId] = '1'
+        array = ','.join(array)
+        print(array)
+        self.caves = array
 
 class race:
 
