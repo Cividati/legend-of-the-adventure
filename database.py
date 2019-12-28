@@ -14,6 +14,7 @@ def get_connection(db_name = 'database.db'):
     return sqlite3.connect(db_url + db_name)
 
 def create_database():
+    
     conn = get_connection()
     cursor = conn.cursor()
     # creating the databse 

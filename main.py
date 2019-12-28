@@ -172,6 +172,7 @@ def main():
             try:
                 with open('database.db', 'r') as f:
                     print('Database already setted!')
+                    default_values()
                     
             except IOError:
                 print('Setting database...\nDone!')
@@ -242,9 +243,9 @@ def play(player):
                                     db.update_player_caves(player,0, '1')
                                     db.update_player_caves(player,1, '0')
                                     t.sleep(3.5)
-            else: print('Ja terminou para você.')
+            
                     
-            if op == '2' and db.get_player_caves(player, 1) == '0':
+            elif op == '2' and db.get_player_caves(player, 1) == '0':
                 print('You have entered into the deserto.')
                 t.sleep(1.5)
                 enemy1 = c.player('Calango', 1, 5, 1, 1, 5, 5)
@@ -265,7 +266,7 @@ def play(player):
 
                                             item = db.get_item(3)
                                             os.system('cls')
-                                            print('You complete the dungeon, Gratzz!')
+                                            print('You complete the deserto, Gratzz!')
                                             # colocar condição se o item já existir no inventário do jogador
                                             print('Here is your reward!')
                                             print(item.name+' has been added to your stash!')
@@ -274,11 +275,7 @@ def play(player):
                                             player.lock_level(0)
                                             t.sleep(3.5)
 
-            elif db.get_player_caves(player, 0) == '0':
-                print('Faça a floresta primeiro.')
-            else: print('Já acabou para você.')
-
-            if op == '3' and db.get_player_caves(player, 2) == '0':
+            elif op == '3' and db.get_player_caves(player, 2) == '0':
                 print('You have entered into the caverna.')
                 t.sleep(1.5)
                 enemy1 = c.player('Rato', 1, 5, 1, 1, 5, 5)
@@ -303,14 +300,12 @@ def play(player):
 
                                                     item = db.get_item(3)
                                                     os.system('cls')
-                                                    print('You complete the desert, Gratzz!')
+                                                    print('You complete the caverna, Gratzz!')
                                                     print('Here is your reward!')
                                                     print(item.name+' has been added to your stash!')
                                                     db.att_item(player, item)
                                                     t.sleep(3.5)
-            elif db.get_player_caves(player, 1) == '0':
-                print('Faça o deserto primeiro.')
-            else: print('Já acabou para você.')
+            
         elif op == '3':
             # Show player ifo
             player.show()
@@ -324,9 +319,3 @@ def play(player):
             print('invalid option')
         
 main()
-p = db.get_player(1)
-print(db.get_player_caves(p, 0))
-db.update_player_caves(p, 0)
-p = db.get_player(1)
-
-print(db.get_player_caves(p, 0))
