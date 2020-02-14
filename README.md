@@ -3,7 +3,7 @@ Trabalho da disciplina de C207 (Banco de Dados)
 
 ### Como usar?
 #### Versão Jogador
-Baixe a versão mais recente do jogo nesse link: [Download](https://github.com/Cividati/legend-of-the-adventure/releases)
+Baixe a versão mais recente do jogo nesse link: [Download](https://github.com/Cividati/legend-of-the-adventure/releases/download/0.17-alpha/game.zip)
 
 #### Versão Desenvolvedor
 ##### Requerimentos
