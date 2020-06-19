@@ -1,5 +1,5 @@
 # Legend of the Adventure
-Trabalho da disciplina de C207 (Banco de Dados)
+Trabalho da disciplina de Banco de Dados
 
 ### Como usar?
 #### Versão Jogador
